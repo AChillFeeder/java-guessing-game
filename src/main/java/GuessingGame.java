@@ -7,15 +7,14 @@ public class GuessingGame {
     int maxNumber = 100;
     int numberOfAllowedAttempts = 10;
     int currentAttempts = 0;
+    boolean gameIsRunning = false;
 
     public static void main(String[] args) {
         GuessingGame Game = new GuessingGame();
-        Game.ComputerNumberChoice();
     }
 
     int ComputerNumberChoice() {
-        int randomGeneratedNumber = ThreadLocalRandom.current().nextInt(1, this.maxNumber);
-        return randomGeneratedNumber;
+        return ThreadLocalRandom.current().nextInt(1, this.maxNumber);
     }
 
     int PlayerNumberChoice() {
@@ -50,13 +49,30 @@ public class GuessingGame {
 
     }
 
-    static int DifferencePlayerChoiceComputerChoice(int playerChoice, int computerChoice){
-        return 0;
+    static boolean DifferencePlayerChoiceComputerChoice(int playerChoice, int computerChoice){
+        if(playerChoice < computerChoice ){
+            System.out.println("The number you chose is lower");
+        } else if(playerChoice > computerChoice) {
+            System.out.println("The number you chose is higher");
+        } else {
+            System.out.println("Nice, You found the number!");
+            return true;
+        }
+        return false;
     }
 
     boolean GameLoop(){
         int computerChoice = this.ComputerNumberChoice();
         int playerChoice = this.PlayerNumberChoice();
+
+        if(currentAttempts < numberOfAllowedAttempts){
+            boolean result = this.DifferencePlayerChoiceComputerChoice(playerChoice, computerChoice);
+            if(result){
+                this.currentAttempts = 0;
+                this.gameIsRunning = false;
+            }
+        }
+
 
         return false;
     }
