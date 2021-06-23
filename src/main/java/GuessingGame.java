@@ -1,10 +1,14 @@
 import exceptions.NotInRangeException;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
+
+
+// better exception and method names
+// method and attributes order
+// new Player class - score, averages, history
+// Database
+
 
 public class GuessingGame {
     int maxNumber = 100;
@@ -12,21 +16,28 @@ public class GuessingGame {
     int currentAttempts = 0;
     boolean gameIsRunning = true;
     int computerChoice = 0;
-//    int score = 0;
     boolean victory = false;
     Scanner in;
 
     public GuessingGame(){
         this.computerChoice = ThreadLocalRandom.current().nextInt(1, this.maxNumber);
-        in = new Scanner(System.in);
+        in = new Scanner(System.in); // create input Scanner instance
     }
 
     public static void main(String[] args) {
         GuessingGame gameInstance = new GuessingGame();
-        // menu and stuff
-        gameInstance.game();
-        gameInstance.gameOverMessage();
-
+        while(true) {
+            int choice = gameInstance.menu();
+            switch (choice) {
+                case 1:
+                    gameInstance.game();
+                    gameInstance.gameOverMessage();
+                    break;
+                default:
+                    gameInstance.in.close();
+                    System.exit(0);
+            }
+        }
     }
 
     void game(){
@@ -45,6 +56,20 @@ public class GuessingGame {
         this.gameIsRunning = false;
     }
 
+    Integer menu(){
+        System.out.print("Do you want to start a guessing game? (yes / no) -> ");
+        String userAnswer = in.nextLine();
+        switch (userAnswer){
+            case "yes":
+            case "y":
+                return 1;
+            case "no":
+            case "n":
+                return 0;
+            default:
+                return -1;
+        }
+    }
 
     Integer playerNumberChoiceErrorHandling(){
         try{
@@ -71,7 +96,6 @@ public class GuessingGame {
         }
     }
 
-
     boolean isPlayerChoiceEqualsComputerChoice(int playerChoice){
         if(playerChoice < this.computerChoice ){
             System.out.println("The number you chose is lower");
@@ -84,7 +108,6 @@ public class GuessingGame {
         return false;
     }
 
-
     void gameOverMessage(){
         // show: this.attempts
         if(!this.gameIsRunning){
@@ -93,11 +116,7 @@ public class GuessingGame {
         }else{
 //            exception
         }
-        in.close();
     }
-
-
-
 
     void gameRound(int playerChoice){
         boolean result = this.isPlayerChoiceEqualsComputerChoice(playerChoice);
