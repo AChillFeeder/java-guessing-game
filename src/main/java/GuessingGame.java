@@ -1,60 +1,81 @@
+import exceptions.NotInRangeException;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class GuessingGame {
     int maxNumber = 100;
     int numberOfAllowedAttempts = 10;
     int currentAttempts = 0;
-    boolean gameIsRunning = false;
+    boolean gameIsRunning = true;
     int computerChoice = 0;
+//    int score = 0;
+    boolean victory = false;
+    Scanner in;
 
     public GuessingGame(){
         this.computerChoice = ThreadLocalRandom.current().nextInt(1, this.maxNumber);
+        in = new Scanner(System.in);
     }
 
     public static void main(String[] args) {
-        GuessingGame Game = new GuessingGame();
-        System.out.println(Game.computerChoice);
+        GuessingGame gameInstance = new GuessingGame();
+        // menu and stuff
+        gameInstance.game();
+        gameInstance.gameOverMessage();
+
     }
 
-    int PlayerNumberChoice() {
-        // checks if user exceeded limit
-        // get input and turn it to Int
-        // make sure it's not float
+    void game(){
+        int playerChoice;
+
+        for(int i=1; i<=this.numberOfAllowedAttempts; i++) {
+
+            playerChoice = this.playerNumberChoiceErrorHandling();
+
+            gameRound(playerChoice);
+            currentAttempts = i;
+            if(!gameIsRunning){
+                break;
+            }
+        }
+        this.gameIsRunning = false;
+    }
+
+
+    Integer playerNumberChoiceErrorHandling(){
+        try{
+            return playerNumberChoice();
+        } catch (NumberFormatException | NotInRangeException err) {
+            System.out.println(err.getMessage());
+            return playerNumberChoice();
+        }
+    }
+
+    Integer playerNumberChoice(){
 
         System.out.print("Enter a number: ");
-        BufferedReader reader = new BufferedReader(
-                new InputStreamReader(System.in)
-        );
 
-        try{
+        String playerChoiceString = in.nextLine();
+        int playerChoice = 0;
+        playerChoice = Integer.parseInt(playerChoiceString);
 
-            String playerChoiceInput = reader.readLine(); // might require String as variable type
-            int playerChoice = Integer.parseInt(playerChoiceInput);
 
-            if ((playerChoice <= this.maxNumber) & (playerChoice > 0)){
-                System.out.println("Number accepted");
-                return playerChoice;
-            } else {
-                System.out.println("Number is not withing the accepted range");
-            }
-
-        } catch(IOException e) {
-            System.out.println("Your input can't be processed");
-        } catch(NumberFormatException e) {
-            System.out.println("Your input should not be decimal");
+        if ((playerChoice <= this.maxNumber) & (playerChoice > 0)){
+            return playerChoice;
+        } else {
+            throw new NotInRangeException("Number is not withing the accepted range");
         }
-
-        return 0;
-
     }
 
-    boolean isPlayerChoiceEqualsComputerChoice(int playerChoice, int computerChoice){
-        if(playerChoice < computerChoice ){
+
+    boolean isPlayerChoiceEqualsComputerChoice(int playerChoice){
+        if(playerChoice < this.computerChoice ){
             System.out.println("The number you chose is lower");
-        } else if(playerChoice > computerChoice) {
+        } else if(playerChoice > this.computerChoice) {
             System.out.println("The number you chose is higher");
         } else {
             System.out.println("Nice, You found the number!");
@@ -63,19 +84,26 @@ public class GuessingGame {
         return false;
     }
 
-    boolean GameLoop(){
-        int playerChoice = this.PlayerNumberChoice();
 
-        if(currentAttempts < numberOfAllowedAttempts){
-            boolean result = this.isPlayerChoiceEqualsComputerChoice(playerChoice, this.computerChoice);
-            if(result){
-                this.currentAttempts = 0;
-                this.gameIsRunning = false;
-            }
+    void gameOverMessage(){
+        // show: this.attempts
+        if(!this.gameIsRunning){
+            String message = (this.victory) ? "you have won!" : "you have lost";
+            System.out.println(message);
+        }else{
+//            exception
         }
-
-
-        return false;
+        in.close();
     }
+
+
+
+
+    void gameRound(int playerChoice){
+        boolean result = this.isPlayerChoiceEqualsComputerChoice(playerChoice);
+        if (result) { // player won
+            this.gameIsRunning = false;
+            this.victory = true;
+        }}
 
 }
