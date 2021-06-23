@@ -7,6 +7,7 @@ import java.util.concurrent.ThreadLocalRandom;
 // better exception and method names
 // method and attributes order
 // new Player class - score, averages, history
+// new menu class as a Launcher - get user's name and provide choices and access to games and settings
 // Database
 
 
@@ -32,6 +33,11 @@ public class GuessingGame {
                 case 1:
                     gameInstance.game();
                     gameInstance.gameOverMessage();
+
+                    // temporary code till the creation of the Launcher
+                    gameInstance.victory = false;
+                    gameInstance.numberOfAllowedAttempts = 10;
+                    gameInstance.gameIsRunning = true;
                     break;
                 default:
                     gameInstance.in.close();
@@ -56,6 +62,7 @@ public class GuessingGame {
         this.gameIsRunning = false;
     }
 
+//    temporary code until the creation of the Launcher
     Integer menu(){
         System.out.print("Do you want to start a guessing game? (yes / no) -> ");
         String userAnswer = in.nextLine();
